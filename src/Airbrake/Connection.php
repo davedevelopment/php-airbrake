@@ -11,8 +11,7 @@ namespace Airbrake;
  */
 class Connection
 {
-    const SERVICE_URL = 'http://airbrakeapp.com/notifier_api/v2/notices';
-
+    protected $serviceUrl = 'http://airbrakeapp.com/notifier_api/v2/notices';
     protected $configuration = null;
     protected $headers = array();
     
@@ -20,8 +19,9 @@ class Connection
      * Build the object with the airbrake Configuration.
      *
      * @param Airbrake\Configuration $configuration
+     * @param string                 $serviceUrl - The api endpoint (optional)
      */
-    public function __construct(Configuration $configuration)
+    public function __construct(Configuration $configuration, $serviceUrl = null)
     {
         $this->configuration = $configuration;
 
@@ -29,6 +29,10 @@ class Connection
 			'Accept: text/xml, application/xml',
 			'Content-Type: text/xml'
 		));        
+
+        if ($serviceUrl !== null) {
+            $this->serviceUrl = $serviceUrl;
+        }
     }
 
     /**
@@ -51,7 +55,7 @@ class Connection
 
         $xml = $notice->toXml($this->configuration);
 
-		curl_setopt($curl, CURLOPT_URL, self::SERVICE_URL);
+		curl_setopt($curl, CURLOPT_URL, $this->serviceUrl);
 		curl_setopt($curl, CURLOPT_POST, 1);
 		curl_setopt($curl, CURLOPT_HEADER, 0);
 		curl_setopt($curl, CURLOPT_TIMEOUT, $this->configuration->timeout);

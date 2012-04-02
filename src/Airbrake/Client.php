@@ -30,13 +30,14 @@ class Client
      *
      * @throws Airbrake\Exception
      * @param Configuration $configuration
+     * @param Connection $connection
      */
-    public function __construct(Configuration $configuration)
+    public function __construct(Configuration $configuration, Connection $connection = null)
     {
         $configuration->verify();
 
         $this->configuration = $configuration;
-        $this->connection    = new Connection($configuration);
+        $this->connection    = $connection ?: new Connection($configuration);
     }
 
     /**
